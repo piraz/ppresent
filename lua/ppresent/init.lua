@@ -75,7 +75,7 @@ local function create_window_configurations()
 
     local header_height = 1 + 2  -- 1 + border
     local footer_height = 1  -- 1, no border
-    local body_height = height - header_height - footer_height - 2 - 1 -- for our own border
+    local body_height = height - header_height - footer_height - 2 - 1 -- for our own boder
 
     return {
         background = {
@@ -222,7 +222,7 @@ M.start_presentation = function(opts)
     vim.api.nvim_create_autocmd("VimResized", {
         group = vim.api.nvim_create_augroup("ppresent-resized", {}),
         callback = function()
-            if not vim.api.nvim_win_is_valid(state.floats.body.win) or state.floats.body_float.win == nil then
+            if not vim.api.nvim_win_is_valid(state.floats.body.win) or state.floats.body.win == nil then
                 return
             end
             local updated = create_window_configurations()
