@@ -141,6 +141,10 @@ M.start_presentation = function(opts)
     state.parsed = parse_slides(lines)
     state.current_slide = 1
     state.title = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(opts.bufnr), ":t")
+    -- check if the file is a markdown
+    if vim.bo[opts.bufnr].filetype ~= "markdown" then
+        return
+    end
 
     local windows = create_window_configurations()
 
