@@ -140,6 +140,7 @@ M.start_presentation = function(opts)
     local lines = vim.api.nvim_buf_get_lines(opts.bufnr, 0, -1, false)
     state.parsed = parse_slides(lines)
     state.current_slide = 1
+    state.title = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(opts.bufnr), ":t")
 
     local windows = create_window_configurations()
 
@@ -166,7 +167,7 @@ M.start_presentation = function(opts)
             " %d / %d | %s",
             state.current_slide,
             #state.parsed.slides,
-            "TITLE OF CURRENT FILE"
+            state.title
         )
         vim.api.nvim_buf_set_lines(state.floats.footer.buf, 0, -1, false, { footer })
     end
