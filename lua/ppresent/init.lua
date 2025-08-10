@@ -19,6 +19,7 @@ local state = {
     parsed = {},
     current_slide = 1,
     floats = {},
+    presenting = false,
 }
 
 vim.api.nvim_set_hl(0, "PPresentWindowBackground", { bg = "#000000" })
@@ -135,6 +136,9 @@ local foreach_float = function(cb)
 end
 
 M.start_presentation = function(opts)
+    if state.presenting then
+        return
+    end
     opts = opts or {}
     opts.bufnr = opts.bufnr or 0
     opts.start_hook = opts.start_hook or state.config.start_hook or nil
@@ -223,6 +227,7 @@ M.start_presentation = function(opts)
             if opts.end_hook then
                 opts.end_hook(state)
             end
+            state.presenting = false
         end,
     })
 
@@ -241,6 +246,7 @@ M.start_presentation = function(opts)
     })
 
     set_slide_content(state.current_slide)
+    state.presenting = true
 end
 
 
