@@ -21,6 +21,8 @@ local state = {
     floats = {},
 }
 
+vim.api.nvim_set_hl(0, "PPresentWindowBackground", { bg = "#000000" })
+
 function M.setup(config)
     state.config = config or {}
 end
@@ -155,6 +157,7 @@ M.start_presentation = function(opts)
 
     foreach_float(function(_, float)
         vim.bo[float.buf].filetype = "markdown"
+        vim.api.nvim_win_set_option(float.win, "winhighlight", "Normal:PPresentWindowBackground,FloatBorder:PPresentWindowBackground")
     end)
 
     vim.bo[state.floats.header.buf].filetype = "markdown"
