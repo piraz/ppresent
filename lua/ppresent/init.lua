@@ -14,8 +14,15 @@ local function create_floating_window(config, enter)
     return { buf = buf, win = win }
 end
 
+local state = {
+    config = {},
+    parsed = {},
+    current_slide = 1,
+    floats = {},
+}
+
 function M.setup(config)
-    config = config or {}
+    state.config = config or {}
 end
 
 --- @class ppresent.Slide
@@ -113,12 +120,6 @@ local function create_window_configurations()
     }
 end
 
-local state = {
-    parsed = {},
-    current_slide = 1,
-    floats = {},
-}
-
 local present_keymap = function(mode, key, callback)
     vim.keymap.set(mode, key, callback, {
         buffer = state.floats.body.buf,
@@ -134,6 +135,8 @@ end
 M.start_presentation = function(opts)
     opts = opts or {}
     opts.bufnr = opts.bufnr or 0
+    opts.start_hook = opts.start_hook or state.config.start_hook or nil
+    opts.end_hook = opts.end_hook or state.config.end_hook or nil
     local lines = vim.api.nvim_buf_get_lines(opts.bufnr, 0, -1, false)
     state.parsed = parse_slides(lines)
     state.current_slide = 1
@@ -182,6 +185,10 @@ M.start_presentation = function(opts)
         vim.api.nvim_win_close(state.floats.body.win, true)
     end)
 
+    if opts.start_hook then
+        opts.start_hook(state)
+    end
+
     local restore = {
         cmdheight = {
             original = vim.o.cmdheight,
@@ -205,6 +212,9 @@ M.start_presentation = function(opts)
             foreach_float(function(_, float)
                 pcall(vim.api.nvim_win_close, float.win, true)
             end)
+            if opts.end_hook then
+                opts.end_hook(state)
+            end
         end,
     })
 
